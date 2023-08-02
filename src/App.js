@@ -1,19 +1,18 @@
 import { useState } from "react";
 import logo from "./assets/investment-calculator-logo.png";
-import ExpenseForm from "./components/ExpenseForm";
 import InvestmentTable from "./components/InvestmentTable";
-import InvestmentList from "./components/InvestmentList";
+import Header from "./components/Header";
+import InvestForm from "./components/InvestForm";
 
 function App() {
-  const [result, setResult] = useState([]);
+  const [userInput, setUserInput] = useState(null);
   const calculateHandler = (userInput) => {
-    // Should be triggered when form is submitted
-    // You might not directly want to bind it to the submit event on the form though...
-
-    const yearlyData = []; // per-year results
-
-    let currentSavings = +userInput["current-savings"]; // feel free to change the shape of this input object!
-    const yearlyContribution = +userInput["yearly-contribution"]; // as mentioned: feel free to change the shape...
+    setUserInput(userInput);
+  };
+  const yearlyData = [];
+  if (userInput) {
+    let currentSavings = +userInput["current-savings"];
+    const yearlyContribution = +userInput["yearly-contribution"];
     const expectedReturn = +userInput["expected-return"] / 100;
     const duration = +userInput["duration"];
 
@@ -22,28 +21,26 @@ function App() {
       const yearlyInterest = currentSavings * expectedReturn;
       currentSavings += yearlyInterest + yearlyContribution;
       yearlyData.push({
-        // feel free to change the shape of the data pushed to the array!
         year: i + 1,
         yearlyInterest: yearlyInterest,
         savingsEndOfYear: currentSavings,
         yearlyContribution: yearlyContribution,
       });
     }
-    setResult(yearlyData);
-    // do something with yearlyData ...
-  };
-  console.log(result);
+  }
 
   return (
     <div>
-      <header className="header">
-        <img src={logo} alt="logo" />
-        <h1>Investment Calculator</h1>
-      </header>
+      <Header logo={logo} />
 
-      <ExpenseForm onCalculate={calculateHandler} />
-      <InvestmentTable results={result} />
-      {/* <InvestmentTable results={result} /> */}
+      <InvestForm onCalculate={calculateHandler} />
+      {!userInput && <p>No Investment calculated yet.</p>}
+      {userInput && (
+        <InvestmentTable
+          data={yearlyData}
+          initialInvestment={userInput["current-savings"]}
+        />
+      )}
 
       {/* Todo: Show below table conditionally (only once result data is available) */}
       {/* Show fallback text if no data is available */}

@@ -1,34 +1,22 @@
 import React, { useState } from "react";
 
-const ExpenseForm = ({ onCalculate }) => {
-  const [state, setState] = useState({
-    "current-savings": "",
-    "yearly-contribution": "",
-    "expected-return": "",
-    duration: "",
-  });
+const INITIAL_INPUTS = {
+  "current-savings": 1000,
+  "yearly-contribution": 1200,
+  "expected-return": 7,
+  duration: 10,
+};
 
-  const handler = {
-    currentSaving: (e) =>
-      setState({
-        ...state,
-        "current-savings": e.target.value,
-      }),
-    yearlySaving: (e) =>
-      setState({
-        ...state,
-        "yearly-contribution": e.target.value,
-      }),
-    interest: (e) =>
-      setState({
-        ...state,
-        "expected-return": e.target.value,
-      }),
-    duration: (e) =>
-      setState({
-        ...state,
-        duration: e.target.value,
-      }),
+const InvestForm = ({ onCalculate }) => {
+  const [state, setState] = useState(INITIAL_INPUTS);
+
+  const onChangeHandler = (input, value) => {
+    setState((prevInput) => {
+      return {
+        ...prevInput,
+        [input]: value,
+      };
+    });
   };
 
   const submitInputHandle = (e) => {
@@ -36,6 +24,10 @@ const ExpenseForm = ({ onCalculate }) => {
     const userInputs = state;
     onCalculate(userInputs);
     console.log(userInputs);
+  };
+
+  const resetHandler = (e) => {
+    setState(INITIAL_INPUTS);
   };
 
   return (
@@ -47,7 +39,7 @@ const ExpenseForm = ({ onCalculate }) => {
             type="number"
             id="current-savings"
             value={state["current-savings"]}
-            onChange={handler.currentSaving}
+            onChange={(e) => onChangeHandler("current-savings", e.target.value)}
           />
         </p>
         <p>
@@ -56,7 +48,9 @@ const ExpenseForm = ({ onCalculate }) => {
             type="number"
             id="yearly-contribution"
             value={state["yearly-contribution"]}
-            onChange={handler.yearlySaving}
+            onChange={(e) =>
+              onChangeHandler("yearly-contribution", e.target.value)
+            }
           />
         </p>
       </div>
@@ -69,7 +63,7 @@ const ExpenseForm = ({ onCalculate }) => {
             type="number"
             id="expected-return"
             value={state["expected-return"]}
-            onChange={handler.interest}
+            onChange={(e) => onChangeHandler("expected-return", e.target.value)}
           />
         </p>
         <p>
@@ -78,12 +72,12 @@ const ExpenseForm = ({ onCalculate }) => {
             type="number"
             id="duration"
             value={state["duration"]}
-            onChange={handler.duration}
+            onChange={(e) => onChangeHandler("duration", e.target.value)}
           />
         </p>
       </div>
       <p className="actions">
-        <button type="reset" className="buttonAlt">
+        <button onClick={resetHandler} type="reset" className="buttonAlt">
           Reset
         </button>
         <button type="submit" className="button">
@@ -94,4 +88,4 @@ const ExpenseForm = ({ onCalculate }) => {
   );
 };
 
-export default ExpenseForm;
+export default InvestForm;
